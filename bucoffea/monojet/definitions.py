@@ -572,11 +572,11 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     if df['is_lo_w']:
-        theory_weights = evaluator["qcd_nlo_w_2017_2d"](mjj, gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 0.919, 3.772e-3, 0.779) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_w_ewk']:
         theory_weights = evaluator["qcd_nlo_w_ewk"](gen_v_pt, mjj)
     elif df['is_lo_z']:
-        theory_weights = evaluator["qcd_nlo_z_2017_2d"](mjj, gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 1.344, 2.619e-3, 0.519) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_z_ewk']:
         theory_weights = evaluator["qcd_nlo_z_ewk"](gen_v_pt, mjj)
     elif df['is_nlo_w']:
