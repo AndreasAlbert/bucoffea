@@ -209,7 +209,7 @@ def setup_candidates(df, cfg):
     else:
         # MC, all years
         jes_suffix = '_nom'
-        jes_suffix_met = '_jer'
+        jes_suffix_met = '_nom'
 
     muons = JaggedCandidateArray.candidatesfromcounts(
         df['nMuon'],
