@@ -201,6 +201,7 @@ class monojetProcessor(processor.ProcessorABC):
         df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
         df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=2.4)
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=2.4)
+        df['HT'] = ak4.pt.sum()
         selection = processor.PackedSelection()
 
 
@@ -222,6 +223,9 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
+        selection.add('pfht1050',df['HT']>1050)
+        selection.add('pfht1200',df['HT']>1200)
+        selection.add('pfht1500',df['HT']>1500)
 
         if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
             selection.add('hemveto', df['hemveto'])

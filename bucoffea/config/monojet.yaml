@@ -135,10 +135,6 @@ default:
     ht:
       gammaeff:
       - HLT_PFHT1050
-      - HLT_PFHT590
-      - HLT_PFHT680
-      - HLT_PFHT780
-      - HLT_PFHT890
 
 env:
   test: false

@@ -518,11 +518,10 @@ def monojet_regions(cfg):
         regions[f'tr_g_notrig_den'] = copy.deepcopy(tr_g_den_cuts)
 
         for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
-            regions[f'tr_g_{trgname}_num'] = tr_g_num_cuts + [trgname]
-            regions[f'tr_g_{trgname}_den'] = tr_g_den_cuts + [trgname]
+            for htcut in ['1050','1200','1500']:
+                regions[f'tr_g_{trgname}_ht{htcut}_num'] = tr_g_num_cuts + [trgname, 'pfht{htcut}']
+                regions[f'tr_g_{trgname}_ht{htcut}_den'] = tr_g_den_cuts + [trgname, 'pfht{htcut}']
 
-            regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
-            regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
     for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
         for cut in ['veto_ele', 'veto_muo', 'veto_photon', 'veto_tau', 'veto_b']:
