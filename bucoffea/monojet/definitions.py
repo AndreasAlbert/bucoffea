@@ -468,10 +468,6 @@ def monojet_regions(cfg):
         tr_1m_den_cuts.remove('trig_met')
         regions['tr_1m_den'] = tr_1m_den_cuts
 
-        # Add HLT muon requirement
-        regions['tr_1m_hlt_num'] = regions['tr_1m_num'] + ['one_hlt_muon']
-        regions['tr_1m_hlt_den'] = regions['tr_1m_den'] + ['one_hlt_muon']
-
         # Double Mu region: Remove recoil cut, toggle MET trigger
         tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) + j_cuts
         tr_2m_num_cuts.remove('recoil')
@@ -482,9 +478,6 @@ def monojet_regions(cfg):
         tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
         tr_2m_den_cuts.remove('trig_met')
         regions['tr_2m_den'] = tr_2m_den_cuts
-
-        regions['tr_2m_hlt_den'] = regions['tr_2m_den'] + ['two_hlt_muons']
-        regions['tr_2m_hlt_num'] = regions['tr_2m_num'] + ['two_hlt_muons']
 
         # Single Electron region: Remove recoil cut, toggle MET trigger
         tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts) + j_cuts
@@ -519,8 +512,8 @@ def monojet_regions(cfg):
 
         for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
             for htcut in ['1050','1200','1500']:
-                regions[f'tr_g_{trgname}_ht{htcut}_num'] = tr_g_num_cuts + [trgname, 'pfht{htcut}']
-                regions[f'tr_g_{trgname}_ht{htcut}_den'] = tr_g_den_cuts + [trgname, 'pfht{htcut}']
+                regions[f'tr_g_{trgname}_ht{htcut}_num'] = tr_g_num_cuts + [trgname, f'pfht{htcut}']
+                regions[f'tr_g_{trgname}_ht{htcut}_den'] = tr_g_den_cuts + [trgname, f'pfht{htcut}']
 
 
     for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
