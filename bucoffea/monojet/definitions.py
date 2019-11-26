@@ -57,6 +57,8 @@ def monojet_accumulator(cfg):
 
     tau21_ax = Bin("tau21", r"Tagger", 50,0,1)
     tagger_ax = Bin("tagger", r"Tagger", 50,0,1)
+    
+    resolution_ax = Bin("resolution", r"resolution", 50,0,2)
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 50,50,150)
 
@@ -69,6 +71,7 @@ def monojet_accumulator(cfg):
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
+    items["gen_lhe_resolution"] = Hist("Counts", dataset_ax, type_ax, resolution_ax)
     items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)

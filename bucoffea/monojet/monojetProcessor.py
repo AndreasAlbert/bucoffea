@@ -307,7 +307,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Gen
         if gen_v_pt is not None:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset, weight=df['Generator_weight'])
-
+            output['gen_lhe_resolution'].fill(resolution=(gen_v_pt/df['LHE_Vpt']-1),dataset=dataset,weight=df['Generator_weight'])
         if 'LHE_HT' in df:
             output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
 
