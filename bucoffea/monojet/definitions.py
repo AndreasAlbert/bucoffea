@@ -197,6 +197,13 @@ def monojet_accumulator(cfg):
             items[f'tree_{region}_{variable}'] = processor.dict_accumulator()
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
+    items['weights_ele_by_pt'] = Hist("Weights", dataset_ax, region_ax, pt_ax, weight_ax, weight_type_ax)
+    items['weights_ele_by_eta'] = Hist("Weights", dataset_ax, region_ax, pt_ax, weight_ax, weight_type_ax)
+    items['weights_ele_by_recoil'] = Hist("Weights", dataset_ax, region_ax, recoil_ax, weight_ax, weight_type_ax)
+    items['weights_muo_by_pt'] = Hist("Weights", dataset_ax, region_ax, pt_ax, weight_ax, weight_type_ax)
+    items['weights_muo_by_eta'] = Hist("Weights", dataset_ax, region_ax, pt_ax, weight_ax, weight_type_ax)
+    items['weights_muo_by_recoil'] = Hist("Weights", dataset_ax, region_ax, recoil_ax, weight_ax, weight_type_ax)
+
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npvgood'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)

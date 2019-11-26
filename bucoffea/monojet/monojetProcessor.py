@@ -462,7 +462,34 @@ class monojetProcessor(processor.ProcessorABC):
             # Monitor weights
             for wname, wvalue in region_weights._weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
-
+                if wname.startswith('ele'):
+                    iw = weight_shape(electrons[leadelectron_index].pt[mask], wvalue[mask])
+                    ezfill('weights_ele_by_pt',
+                            weight_type=wname,
+                            weight_value=iw,
+                            pt=electrons[leadelectron_index][mask].pt.flatten())
+                    ezfill('weights_ele_by_eta',
+                            weight_type=wname,
+                            weight_value=iw,
+                            pt=electrons[leadelectron_index][mask].eta.flatten())
+                    ezfill('weights_ele_by_recoil',
+                            weight_type=wname,
+                            weight_value=wvalue[mask],
+                            recoil=df['recoil_pt'][mask])
+                if wname.startswith('muo'):
+                    iw = weight_shape(muons[leadmuon_index].pt[mask], wvalue[mask])
+                    ezfill('weights_muo_by_pt',
+                            weight_type=wname,
+                            weight_value=iw,
+                            pt=muons[leadmuon_index][mask].pt.flatten())
+                    ezfill('weights_muo_by_eta',
+                            weight_type=wname,
+                            weight_value=iw,
+                            pt=muons[leadmuon_index][mask].eta.flatten())
+                    ezfill('weights_muo_by_recoil',
+                            weight_type=wname,
+                            weight_value=wvalue[mask],
+                            recoil=df['recoil_pt'][mask])
             # All ak4
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, region_weights.weight()[mask])
