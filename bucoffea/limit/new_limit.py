@@ -1,4 +1,5 @@
 #!/bin/env python
+import re
 import rhalphalib as rl
 import numpy as np
 
@@ -18,9 +19,9 @@ def region_name(region):
     return region.replace('_','-')
 
 def recoil_bins_2016():
-    return [ 250.,  280.,  310.,  340.,  370.,  400.,  
-             430.,  470.,  510., 550.,  590.,  640.,  
-             690.,  740.,  790.,  840.,  900.,  960., 
+    return [ 250.,  280.,  310.,  340.,  370.,  400.,
+             430.,  470.,  510., 550.,  590.,  640.,
+             690.,  740.,  790.,  840.,  900.,  960.,
              1020., 1090., 1160., 1250., 1400.]
 
 def datasets(year):
@@ -39,7 +40,7 @@ def datasets(year):
     data.update(tmp)
 
 
- 
+
     mc = {
                 'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
                 'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
@@ -50,6 +51,7 @@ def datasets(year):
             }
     return data, mc
 def prepare_histogram(acc):
+
     histogram = copy.deepcopy(acc['recoil'])
     newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
     histogram = histogram.rebin(histogram.axis(newax.name), newax)
@@ -59,11 +61,13 @@ def prepare_histogram(acc):
     return histogram
 
 
-def populate_non_v(model, data, mc, channels):
+def populate_non_v(model, histogram, data, mc, channels):
     """Defines regions and defines the non-leading backgrounds.
-    
+
     :param rl: The rhalphalib model to populate
     :type rl: rhalphalib.model
+    :param histogram: Coffea histogram containing the relevant distributions
+    :type histogram: coffea.hist.Hist
     :param data: Regular expressions to identify datasets for data per region
     :type data: dict
     :param mc: Regular expressions to identify datasets for backgrounds per region
@@ -75,8 +79,8 @@ def populate_non_v(model, data, mc, channels):
     # Create channels and populate non-V backgrounds
     for region in regions:
         # Create Channel, add to model
-        channels[region] = rl.Channel(region_name(region))
-        model.addChannel(channels[region])
+        channels[region_name(region)] = rl.Channel(region_name(region))
+        model.addChannel(channels[region_name(region)])
 
         h = histogram.integrate(histogram.axis('region'),region)
 
@@ -87,24 +91,24 @@ def populate_non_v(model, data, mc, channels):
             # Skip unwanted processes
             if not (is_mc or is_data):
                 continue
-            
+
             # Skip V backgrounds
             if re.match('(DY|W).*(HT|LHE)', dataset):
                 continue
-            
-            # Integrate to given dataset and either set 
+
+            # Integrate to given dataset and either set
             # observation or create template sample
             template = h.integrate(h.axis('dataset'),dataset)
             if is_data:
-                channels[region].setObservation(template)
+                channels[region_name(region)].setObservation(template)
             else:
                 sample_name = f'{region.replace("_","-")}_{dataset}'
                 sample = rl.TemplateSample(
-                                        sample_name, 
-                                        rl.Sample.BACKGROUND, 
+                                        sample_name,
+                                        rl.Sample.BACKGROUND,
                                         template,
                                         )
-                channels[region].addSample(sample)
+                channels[region_name(region)].addSample(sample)
 
             # TODO: Nuisances
 
@@ -137,8 +141,8 @@ def monojet(acc, year=2017, outdir='./output'):
 
     # Treat trailing backgrounds first
     # (Simple template samples)
-    populate_non_v(model, data, mc, channels)
-
+    populate_non_v(model, histogram, data, mc, channels)
+    print(channels.keys())
     # Set up templates
     templates = {}
     templates['zvv'] = histogram.integrate('region',pick_region('sr_.*')).integrate('dataset',re.compile('ZJetsToNuNu.*'))
@@ -147,22 +151,22 @@ def monojet(acc, year=2017, outdir='./output'):
     templates['wlv'] = histogram.integrate('region',pick_region('sr_.*')).integrate('dataset',re.compile('WJetsTo.*'))
     templates['wev'] = histogram.integrate('region',pick_region('cr_1m.*')).integrate('dataset',re.compile('WJetsTo.*'))
     templates['wmv'] = histogram.integrate('region',pick_region('cr_1e.*')).integrate('dataset',re.compile('WJetsTo.*'))
-    templates['gj'] = histogram.integrate('region',pick_region('cr_g.*')).integrate('dataset',re.compile('GJetsTo.*'))
+    templates['gj'] = histogram.integrate('region',pick_region('cr_g.*')).integrate('dataset',re.compile('GJets.*'))
 
     samples = {}
-    zvv_yield_params = np.array([rl.IndependentParameter('tmp', b, 0, templates['zvv'].values().max()*2) for b in templates['zvv'].values()])
+    zvv_yield_params = np.array([rl.IndependentParameter('tmp', b, 0, templates['zvv'].values()[()].max()*2) for b in templates['zvv'].values()[()]])
 
     # SR Zvv
     samples['zvv'] = rl.ParametericSample(
-                                    region_name(pick_region('sr_.*'))+'_zvv', 
-                                    rl.Sample.BACKGROUND, 
-                                    recoil, 
+                                    region_name(pick_region('sr_.*'))+'_zvv',
+                                    rl.Sample.BACKGROUND,
+                                    recoil,
                                     zvv_yield_params)
     channels[region_name(pick_region('sr_.*'))].addSample(samples['zvv'])
 
     def add_tf_sample(name, region_regex, denominator):
         """Helper to quickly set up TransferFactorSample
-        
+
         :param name: Name of the new process, e.g. wlv
         :type name: str
         :param region_regex: Regular expression to determine the region for this process
@@ -172,9 +176,10 @@ def monojet(acc, year=2017, outdir='./output'):
         """
         rname = region_name(pick_region(region_regex))
         samples[name] = rl.TransferFactorSample(
-                                             rname+'_'+name, 
+                                             rname+'_'+name,
                                              rl.Sample.BACKGROUND,
-                                             templates[name].getExpectation() / templates[denominator].getExpectation()
+                                             templates[name].values()[()] / templates[denominator].values()[()],
+                                             samples[denominator]
                                             )
         channels[rname].addSample(samples[name])
 

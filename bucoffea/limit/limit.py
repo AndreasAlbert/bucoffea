@@ -10,6 +10,7 @@ def parse_commandline():
     parser = argparse.ArgumentParser()
     parser.add_argument('inpath', type=str, help='Input path to use.')
     parser.add_argument('--channel', type=str, choices=['monojet','monov','vbfhinv'], help='Channel to make inputs for.', default='monojet')
+    parser.add_argument('--rha', action='store_true', default=False, help='Use rhalphalib interface.')
     args = parser.parse_args()
 
     if not os.path.isdir(args.inpath):
@@ -32,8 +33,13 @@ def main():
         acc = acc_from_dir(args.inpath)
 
     if args.channel == 'monojet':
-        from legacy_monojet import legacy_limit_input_monojet
-        legacy_limit_input_monojet(acc)
+        if args.rha:
+            from new_limit import monojet
+            monojet(acc)
+        else:
+            from legacy_monojet import legacy_limit_input_monojet
+            legacy_limit_input_monojet(acc)
+
     elif args.channel == 'monov':
         from legacy_monov import legacy_limit_input_monov
         legacy_limit_input_monov(acc)
