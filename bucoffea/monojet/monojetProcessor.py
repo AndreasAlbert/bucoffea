@@ -152,6 +152,8 @@ class monojetProcessor(processor.ProcessorABC):
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
         met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        leading_jet_in_eta = ak4[ak4.pt.argmax()].abseta<2.4
+        ak4 = ak4[ak4.looseId]
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -222,6 +224,7 @@ class monojetProcessor(processor.ProcessorABC):
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
                          & (ak4.abseta[leadak4_index] < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
         selection.add('leadak4_pt_eta', leadak4_pt_eta)
+        selection.add('leading_jet_in_eta', leadak4_pt_eta)
 
         selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
                                                     & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \

@@ -362,8 +362,6 @@ def setup_candidates(df, cfg):
     if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
         bjets = bjets[object_overlap(bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
 
-    ak4 = ak4[ak4.looseId]
-
     if cfg.OVERLAP.AK4.MUON.CLEAN:
         ak4 = ak4[object_overlap(ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
     if cfg.OVERLAP.AK4.ELECTRON.CLEAN:
@@ -413,11 +411,12 @@ def monojet_regions(cfg):
         'veto_b',
         'mindphijr',
         'dpfcalo',
-        'recoil'
+        'recoil',
     ]
     j_cuts = [
         'leadak4_pt_eta',
         'leadak4_id',
+        'leading_jet_in_eta'
         # 'veto_vtag'
     ]
     # Test out different working point for v tagging
