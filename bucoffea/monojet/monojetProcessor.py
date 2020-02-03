@@ -224,7 +224,7 @@ class monojetProcessor(processor.ProcessorABC):
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
                          & (ak4.abseta[leadak4_index] < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
         selection.add('leadak4_pt_eta', leadak4_pt_eta)
-        selection.add('leading_jet_in_eta', leadak4_pt_eta)
+        selection.add('leading_jet_in_eta', leading_jet_in_eta)
 
         selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
                                                     & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
