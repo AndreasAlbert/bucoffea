@@ -36,6 +36,7 @@ sed -i '/.*LHEWpT_0-50.*/d' datasets_201*.txt
 sed -i '/.*LHEWpT_50-150.*/d' datasets_201*.txt
 sed -i '/.*CP5up.*/d' datasets_201*.txt
 sed -i '/.*CP5down.*/d' datasets_201*.txt
+sed -i '/.*CP5CR.*/d' datasets_201*.txt
 
 # sed '/\(Run2016\|\/G.*Jet\)/!d' -i datasets_2016.txt
 sed -i '/.*JetHT.*/d' datasets_2016.txt

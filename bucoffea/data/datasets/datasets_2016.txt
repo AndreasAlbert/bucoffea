@@ -1,4 +1,6 @@
 # W NLO
+# W*JetsToLNu_LHEWpT_*_Tune*_13TeV-amcnloFXFX-pythia8
+# WJetsToLNu_*J_Tune*_13TeV-amcatnloFXFX-pythia8
 
 # W LO
 # W*JetsToLNu_Tune*_13TeV-madgraphMLM-pythia8
@@ -21,6 +23,8 @@
 /WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1/NANOAODSIM
 
 # Z NLO
+# Z*JetsToNuNu_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
+# DY*JetsToLL_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 
 # Z LO
 # DY*JetsToLL_M-50_Tune*_13TeV-madgraphMLM-pythia8
@@ -70,18 +74,7 @@
 /GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_qcut19_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
 # GJets_HT-*_Tune*_13TeV-madgraphMLM-pythia8
 /AJJ_EWK_TuneCUETP8M1_13TeV_amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
-/G1Jet_Pt-100To250_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
-/G1Jet_Pt-100To250_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1/NANOAODSIM
-/G1Jet_Pt-100To250_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext2-v1/NANOAODSIM
-/G1Jet_Pt-250To400_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
-/G1Jet_Pt-250To400_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1/NANOAODSIM
-/G1Jet_Pt-250To400_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext2-v1/NANOAODSIM
-/G1Jet_Pt-400To650_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
-/G1Jet_Pt-400To650_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1/NANOAODSIM
-/G1Jet_Pt-50To100_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
-/G1Jet_Pt-50To100_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1/NANOAODSIM
-/G1Jet_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM
-/G1Jet_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1/NANOAODSIM
+# G*Jet_Pt-*_Tune*_13TeV-amcatnlo-pythia8
 
 # TT
 # TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8
