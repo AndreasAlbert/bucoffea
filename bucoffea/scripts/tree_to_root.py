@@ -6,18 +6,23 @@ import uproot
 import numpy as np
 infiles = sys.argv[1:]
 
+
+# Find region and branch names
+variables = []
+regions = []
 for fname in infiles:
     acc = load(fname)
+    
+    for region in acc['tree'].keys():
+        regions.append(region)
+        variables.extend(acc['tree'][region].keys())
 
-    with uproot.recreate("tree.root") as f:
-        for region in acc['tree'].keys():
-            
-            rdict = acc['tree'][region]
-            variables = rdict.keys()
-            f[region] = uproot.newtree({x:np.float64 for x in variables})
 
-            # for variable in variables:
-            #     values = rdict[variable].value
-            d = {x: rdict[x].value for x in variables}
-            print(d)
-            f[region].extend(d)
+# Combine
+with uproot.recreate("tree.root") as f:
+    for region in regions:
+        f[region] = uproot.newtree({x:np.float64 for x in variables})
+    for fname in infiles:
+        acc = load(fname)
+        d = {x: acc['tree'][region][x].value for x in variables}
+        f[region].extend(d)
