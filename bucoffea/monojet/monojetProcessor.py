@@ -404,7 +404,7 @@ class monojetProcessor(processor.ProcessorABC):
                 for icut, cutname in enumerate(cuts):
                     output['cutflow_' + region][dataset][cutname] += selection.all(*cuts[:icut+1]).sum()
 
-            mask = selection.all(*cuts)
+            mask = selection.all(*cuts) 
 
 
             if cfg.RUN.SAVE.TREE:
@@ -416,9 +416,23 @@ class monojetProcessor(processor.ProcessorABC):
                         output[name][dataset] += treeacc
                     else:
                         output[name][dataset] = treeacc
-                if region in ['cr_1e_j']:
+                if region in ['cr_1m_j','cr_2m_j']:
                     output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
                     output['tree'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
+
+                    output['tree'][region]["mu0pt"] += processor.column_accumulator(muons.pt[leadmuon_index][mask].max())
+                    output['tree'][region]["mu0eta"] += processor.column_accumulator(muons.eta[leadmuon_index][mask].max())
+                    output['tree'][region]["mu1pt"] += processor.column_accumulator(muons.pt[~leadmuon_index][mask].max())
+                    output['tree'][region]["mu1eta"] += processor.column_accumulator(muons.eta[~leadmuon_index][mask].max())
+
+                    output['tree'][region]["muon_id_tight"]  += processor.column_accumulator(region_weights.partial_weight(include=["muon_id_tight"])[mask])
+                    output['tree'][region]["muon_id_loose"]  += processor.column_accumulator(region_weights.partial_weight(include=["muon_id_loose"])[mask])
+                    output['tree'][region]["muon_iso_tight"] += processor.column_accumulator(region_weights.partial_weight(include=["muon_iso_tight"])[mask])
+                    output['tree'][region]["muon_iso_loose"] += processor.column_accumulator(region_weights.partial_weight(include=["muon_iso_loose"])[mask])
+                    output['tree'][region]["trigger_met"] += processor.column_accumulator(region_weights.partial_weight(include=["trigger_met"])[mask])
+                    output['tree'][region]["prefire"] += processor.column_accumulator(region_weights.partial_weight(include=["prefire"])[mask])
+                    output['tree'][region]["weight"] += processor.column_accumulator(region_weights.weight()[mask])
+
                     # output['tree'][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
                     output['tree'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
             # Save the event numbers of events passing this selection
