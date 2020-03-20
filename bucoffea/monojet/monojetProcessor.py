@@ -268,6 +268,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo_sr',np.abs(df['dPFCaloSR']) < cfg.SELECTION.SIGNAL.DPFCALO)
+        selection.add('invmindphijr',df['minDPhiJetRecoil'] <= cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
@@ -504,11 +505,11 @@ class monojetProcessor(processor.ProcessorABC):
                         output[name][dataset] += treeacc
                     else:
                         output[name][dataset] = treeacc
-                if region in ['cr_1e_j']:
-                    output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
-                    output['tree'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
-                    # output['tree'][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
-                    output['tree'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
+                if df["is_data"]:
+                    if region in ['cr_qcd_j']:
+                        mask2 = df["recoil_pt"] > 1000
+                        output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask&mask2])
+                        output['tree'][region]["tree"] +=  processor.column_accumulator(df["recoil_pt"][mask&mask2])
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 # Save only every Nth event
@@ -663,6 +664,39 @@ class monojetProcessor(processor.ProcessorABC):
                             weight=region_weights.partial_weight(exclude=exclude+["vetoweight"])[mask]*veto_weights.partial_weight(include=[variation])[mask],
                             variation=variation
                             )
+
+            # SR data-driven QCD estimate
+            if re.match(".*cr_qcd.*",region):
+                ezfill("recoil_vs_dphi_qcd",recoil=df["recoil_pt"][mask],dphi=df["minDPhiJetMet"][mask], weight=region_weights.weight()[mask])
+
+            if re.match(".*cr_qcd.*invdphi.*",region):
+                ak4_30 = ak4[ak4.pt>30]
+                w_alljets30 = weight_shape(ak4_30[mask].eta, region_weights.weight()[mask])
+
+                recoil_all_jets = (ak4_30.phi.ones_like() * df["recoil_pt"])[mask].flatten()
+                ezfill("recoil_vs_ak4_pt_qcd", recoil=recoil_all_jets, pt=ak4_30.pt[mask].flatten(), weight=w_alljets30)
+                ezfill("recoil_vs_ak4_eta_qcd", recoil=recoil_all_jets, eta=ak4_30.eta[mask].flatten(), weight=w_alljets30)
+                ezfill("recoil_vs_ak4_phi_qcd", recoil=recoil_all_jets, phi=ak4_30.phi[mask].flatten(), weight=w_alljets30)
+                
+                ezfill("recoil_vs_ak4_nhf_qcd", recoil=recoil_all_jets, fraction=ak4_30.nhf[mask].flatten(), weight=w_alljets30)
+                ezfill("recoil_vs_ak4_chf_qcd", recoil=recoil_all_jets, fraction=ak4_30.chf[mask].flatten(), weight=w_alljets30)
+                ezfill("recoil_vs_ak4_nef_qcd", recoil=recoil_all_jets, fraction=ak4_30.nef[mask].flatten(), weight=w_alljets30)
+                ezfill("recoil_vs_ak4_muf_qcd", recoil=recoil_all_jets, fraction=ak4_30.muf[mask].flatten(), weight=w_alljets30)
+                ezfill("recoil_vs_ak4_nconst_qcd", recoil=recoil_all_jets, constituents=ak4_30.nconst[mask].flatten(), weight=w_alljets30)
+
+                ezfill("recoil_vs_ak4_pt0_qcd", recoil=df["recoil_pt"][mask], pt=ak4[leadak4_index].pt[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_eta0_qcd", recoil=df["recoil_pt"][mask], eta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_phi0_qcd", recoil=df["recoil_pt"][mask], phi=ak4[leadak4_index].phi[mask].flatten(), weight=w_leadak4)
+                
+                ezfill("recoil_vs_ak4_nhf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].nhf[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_chf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_nef0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].nef[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_muf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].muf[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_nconst0_qcd", recoil=df["recoil_pt"][mask], constituents=ak4[leadak4_index].nconst[mask].flatten(), weight=w_leadak4)
+
+                ezfill("recoil_vs_njet_qcd", recoil=df["recoil_pt"][mask], multiplicity=ak4_30.counts[mask], weight=region_weights.weight()[mask])
+                ezfill("recoil_vs_recoil_phi_qcd", recoil=df["recoil_pt"][mask], phi=df["recoil_phi"][mask], weight=region_weights.weight()[mask])
+                ezfill("recoil_vs_ak4pt0_over_recoil_qcd", recoil=df["recoil_pt"][mask], ratio=ak4[leadak4_index].pt[mask].max() / df["recoil_pt"][mask], weight=region_weights.weight()[mask])
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):

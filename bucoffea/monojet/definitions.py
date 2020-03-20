@@ -51,6 +51,7 @@ def monojet_accumulator(cfg):
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
+    recoil_ax_qcd = Bin("recoil", r"Recoil (GeV)", [0,800,900,1000,1100,1200,2000])
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
@@ -61,8 +62,10 @@ def monojet_accumulator(cfg):
 
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
-    multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
+    multiplicity_ax = Bin("multiplicity", r"multiplicity", 20, -0.5, 19.5)
+    constituent_ax = Bin("constituents", r"constituents", 20, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
+    dphi_ax_qcd = Bin("dphi", r"$\Delta\phi$", [0.,.1,.2,.3,.4,.5,5])
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
@@ -70,6 +73,7 @@ def monojet_accumulator(cfg):
     id_ax = Bin("id", r"ID bool", 2,-0.5,1.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 50, 0, 1000)
+    pt_ax_coarse = Bin("pt", r"$p_{T}$ (GeV)", 40, 0, 2000)
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 50, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 50, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
@@ -77,7 +81,7 @@ def monojet_accumulator(cfg):
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
     phi_ax_coarse = Bin("phi", r"$\phi$", 20,-np.pi, np.pi)
 
-    ratio_ax = Bin("ratio", "ratio", 50,0,2)
+    ratio_ax = Bin("ratio", "ratio", 10,0,2)
 
     tau21_ax = Bin("tau21", r"Tagger", 50,0,1)
     tagger_ax = Bin("tagger", r"Tagger", 50,0,1)
@@ -92,6 +96,7 @@ def monojet_accumulator(cfg):
     rho_ax = Bin('rho','Energy density',50, 0, 100)
     frac_ax = Bin('frac','Fraction', 50, 0, 1)
     deepcsv_ax = Bin('deepcsv','DeepCSV discriminator', 50, 0, 1)
+    fraction_ax = Bin('fraction','Fraction', 20, 0, 1)
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
@@ -100,6 +105,33 @@ def monojet_accumulator(cfg):
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_veto_weight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,variation_ax)
+    items["recoil_vs_dphi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,dphi_ax_qcd)
+
+    items["recoil_vs_ak4_pt_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, pt_ax_coarse)
+    items["recoil_vs_ak4_pt0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, pt_ax_coarse)
+    items["recoil_vs_ak4_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+    items["recoil_vs_ak4_phi0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+    items["recoil_vs_ak4_eta_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, eta_ax)
+    items["recoil_vs_ak4_eta0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, eta_ax)
+
+    items["recoil_vs_ak4_nhf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_nhf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_nef_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_nef0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_chf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_chf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_muf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_muf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    
+    items["recoil_vs_ak4_nconst_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, constituent_ax)
+    items["recoil_vs_ak4_nconst0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, constituent_ax)
+    
+    items["recoil_vs_njet_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, multiplicity_ax)
+
+    items["recoil_vs_recoil_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+    items["recoil_vs_ak4pt0_over_recoil_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, ratio_ax)
+
+
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -384,9 +416,15 @@ def setup_candidates(df, cfg):
         nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
+        nef=df['Jet_neEmEF'],
+        muf=df['Jet_muEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
         nconst=df['Jet_nConstituents'],
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
+        nele=df['Jet_nElectrons'],
+        nmu=df['Jet_nMuons']
+        # clean=df['Jet_cleanmask']
+        # cef=df['Jet_chEmEF'],
     )
 
     # Before cleaning, apply HEM veto
@@ -492,8 +530,8 @@ def monojet_regions(cfg):
     regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts
     regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts
 
-    regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
-    regions['cr_nofilt_j'].remove('filt_met')
+    # regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
+    # regions['cr_nofilt_j'].remove('filt_met')
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
@@ -527,13 +565,13 @@ def monojet_regions(cfg):
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
-    # a tt-bar populated region by removing b veto
-    regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
-    regions['cr_nobveto_v'].remove('veto_b')
+    # # a tt-bar populated region by removing b veto
+    # regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
+    # regions['cr_nobveto_v'].remove('veto_b')
 
     # additional regions to test out deep ak8 WvsQCD tagger
-    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','cr_nobveto_v']:
-        for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
+    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
+        for wp in ['tight']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
@@ -676,6 +714,24 @@ def monojet_regions(cfg):
 
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
+
+    
+    tmp = {}
+    for sr, reqs in regions.items():
+        new_name = sr.replace("sr","cr_qcd")
+        new_reqs = copy.deepcopy(reqs)
+        new_reqs.remove("mindphijr")
+        new_reqs.remove("recoil")
+        tmp[new_name] = new_reqs
+
+        new_name = sr.replace("sr","cr_qcd_invdphijr")
+        new_reqs = copy.deepcopy(reqs)
+        new_reqs.remove("mindphijr")
+        new_reqs.append("invmindphijr")
+        new_reqs.remove("recoil")
+        tmp[new_name] = new_reqs
+
+    regions.update(tmp)
 
     if cfg and not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
