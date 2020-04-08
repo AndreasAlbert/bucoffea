@@ -107,7 +107,7 @@ def btag_weight(bjets, genjets, cfg):
         return bjets.pt.ones_like()
 
     # Heavy lifting done by coffea implementation
-    bsf = BTagScaleFactor(cfg.SF.DEEPCSV.FILE, cfg.BTAG.WP.uppercase())
+    bsf = BTagScaleFactor(cfg.SF.DEEPCSV.FILE, cfg.BTAG.WP.upper())
 
     # Generator flavor info
     gen_is_b = np.abs(genjets.hadronflav)==5
@@ -502,11 +502,11 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_eta_phi', phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
-            w_bjets = weight_shape(bjets[mask].eta, region_weights.weight(exclude=["bveto"])[mask])
-            ezfill('bjet_eta',    jeteta=bjet[mask].eta.flatten(), weight=w_bjets)
-            ezfill('bjet_phi',    jetphi=bjet[mask].phi.flatten(), weight=w_bjets)
-            ezfill('bjet_pt',     jetpt=bjet[mask].pt.flatten(),   weight=w_bjets)
-            ezfill('bjet_sf',     sf=bsf.flatten(),   weight=w_bjets)
+            w_bjets = weight_shape(bjets[mask].eta, region_weights.partial_weight(exclude=["bveto"])[mask])
+            ezfill('bjet_eta',    jeteta=bjets[mask].eta.flatten(), weight=w_bjets)
+            ezfill('bjet_phi',    jetphi=bjets[mask].phi.flatten(), weight=w_bjets)
+            ezfill('bjet_pt',     jetpt=bjets[mask].pt.flatten(),   weight=w_bjets)
+            ezfill('bjet_sf',     sf=bsf[mask].flatten(),   weight=w_bjets)
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], region_weights.weight()[mask])
@@ -575,6 +575,8 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('recoil_nopref',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['prefire'])[mask])
             ezfill('recoil_nopu',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['pileup'])[mask])
             ezfill('recoil_notrg',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['trigger'])[mask])
+            ezfill('recoil_hardbveto',    recoil=df["recoil_pt"][mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=['bveto'])[mask&(bjets.counts==0)])
+
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/df["recoil_pt"][mask],      weight=region_weights.weight()[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.weight()[mask] )
