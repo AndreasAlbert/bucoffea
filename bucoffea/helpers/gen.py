@@ -243,7 +243,8 @@ def setup_gen_jets(df):
         pt=df['GenJet_pt'],
         eta=df['GenJet_eta'],
         phi=df['GenJet_phi'],
-        mass=0*df['GenJet_pt']
+        mass=0*df['GenJet_pt'],
+        hadronflav=df['GenJet_hadronFlavour']
         )
     return genjets
 

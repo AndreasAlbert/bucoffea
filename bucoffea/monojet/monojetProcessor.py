@@ -100,6 +100,29 @@ def trigger_selection(selection, df, cfg):
 
     return selection
 
+def btag_weight(bjets, genjets, cfg):
+    # Only calculate for DeepCSV
+    if cfg.BTAG.ALGO != "deepcsv":
+        return bjets.pt.ones_like()
+
+    # Heavy lifting done by coffea implementation
+    bsf = BTagScaleFactor(cfg.SF.DEEPCSV.FILE, cfg.BTAG.WP.uppercase())
+
+    # Generator flavor info
+    gen_is_b = np.abs(genjets.hadronflav)==5
+    gen_is_c = np.abs(genjets.hadronflav)==4
+    gen_is_l = ~(gen_is_b | gen_is_c)
+
+    matches_gen_b = bjets.match(genjets[gen_is_b], deltaRCut=0.4)
+    matches_gen_c = bjets.match(genjets[gen_is_c], deltaRCut=0.4) & ~matches_gen_b
+
+    flavour = 5 * matches_gen_b + 4 * matches_gen_c + bjets.pt.zeros_like()
+
+    # Evaluate weight
+    weight = bsf.eval("central",flavour, bjets.abseta, bjets.pt)
+
+    return weight
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -210,7 +233,12 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
-        selection.add('veto_b', bjets.counts==0)
+
+        if df["is_data"]:
+            selection.add('veto_b', bjets.counts==0)
+        else:
+            selection.add('veto_b', pass_all)
+
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
@@ -314,6 +342,12 @@ class monojetProcessor(processor.ProcessorABC):
                 weights.add('prefire', np.ones(df.size))
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
+
+
+            bsf = btag_weight(bjets,genjets,weights, df)
+
+            weights.add("bveto", (1-bsf).prod())
+
             weights = pileup_weights(weights, df, evaluator, cfg)
             if not (gen_v_pt is None):
                 weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
