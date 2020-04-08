@@ -43,6 +43,7 @@ from bucoffea.helpers.dataset import (
 from bucoffea.helpers.gen import (
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
+                                  setup_gen_jets,
                                   fill_gen_v_info
                                  )
 
@@ -343,7 +344,7 @@ class monojetProcessor(processor.ProcessorABC):
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
 
-
+            genjets = setup_gen_jets()
             bsf = btag_weight(bjets,genjets,weights, df)
 
             weights.add("bveto", (1-bsf).prod())
