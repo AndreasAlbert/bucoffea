@@ -107,7 +107,7 @@ def btag_weight(bjets, genjets, cfg):
         return bjets.pt.ones_like()
 
     # Heavy lifting done by coffea implementation
-    bsf = BTagScaleFactor(cfg.SF.DEEPCSV.FILE, cfg.BTAG.WP.upper())
+    bsf = BTagScaleFactor(bucoffea_path(cfg.SF.DEEPCSV.FILE), cfg.BTAG.WP.upper())
 
     # Generator flavor info
     gen_is_b = np.abs(genjets.hadronflav)==5
