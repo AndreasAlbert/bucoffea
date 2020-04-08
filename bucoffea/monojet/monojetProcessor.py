@@ -501,6 +501,12 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_eta_phi', phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
+            w_bjets = weight_shape(bjets[mask].eta, region_weights.weight(exclude=["bveto"])[mask])
+            ezfill('bjet_eta',    jeteta=bjet[mask].eta.flatten(), weight=w_bjets)
+            ezfill('bjet_phi',    jetphi=bjet[mask].phi.flatten(), weight=w_bjets)
+            ezfill('bjet_pt',     jetpt=bjet[mask].pt.flatten(),   weight=w_bjets)
+            ezfill('bjet_sf',     sf=bsf.flatten(),   weight=w_bjets)
+
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], region_weights.weight()[mask])
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)

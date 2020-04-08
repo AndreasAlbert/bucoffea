@@ -69,6 +69,7 @@ def monojet_accumulator(cfg):
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",50,0.5,1.5)
+    sf_ax = Bin("sf", "sf",50,0.8,1.8)
 
     nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',50, 0, 100)
@@ -98,6 +99,10 @@ def monojet_accumulator(cfg):
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["bjet_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["bjet_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["bjet_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["bjet_sf"] = Hist("Counts", dataset_ax, region_ax, sf_ax)
     items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
