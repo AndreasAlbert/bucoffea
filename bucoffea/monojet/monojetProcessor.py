@@ -4,9 +4,9 @@ import re
 import numpy as np
 
 import coffea.processor as processor
+from coffea.btag_tools.btagscalefactor import BTagScaleFactor
 
 from dynaconf import settings as cfg
-
 from bucoffea.monojet.definitions import (
                                           monojet_accumulator,
                                           setup_candidates,
@@ -344,9 +344,9 @@ class monojetProcessor(processor.ProcessorABC):
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
 
-            genjets = setup_gen_jets()
-            bsf = btag_weight(bjets,genjets,weights, df)
-
+            # B jet veto weights
+            genjets = setup_gen_jets(df)
+            bsf = btag_weight(bjets,genjets,cfg)
             weights.add("bveto", (1-bsf).prod())
 
             weights = pileup_weights(weights, df, evaluator, cfg)
