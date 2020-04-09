@@ -74,6 +74,7 @@ def monojet_accumulator(cfg):
     nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',50, 0, 100)
     frac_ax = Bin('frac','Fraction', 50, 0, 1)
+    deepcsv_ax = Bin('deepcsv','DeepCSV discriminator', 50, 0, 1)
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
@@ -100,6 +101,7 @@ def monojet_accumulator(cfg):
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_deepcsv"] = Hist("Counts", dataset_ax, region_ax, deepcsv_ax)
     items["bjet_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["bjet_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["bjet_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)

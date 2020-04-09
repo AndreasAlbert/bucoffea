@@ -120,7 +120,7 @@ def btag_weight(bjets, genjets, cfg):
     flavour = 5 * matches_gen_b + 4 * matches_gen_c + bjets.pt.zeros_like()
 
     # Evaluate weight
-    weight = bsf.eval("central",flavour, bjets.abseta, bjets.pt, discr=bjet.deepcsv)
+    weight = bsf.eval("central",flavour, bjets.abseta, bjets.pt, discr=bjets.deepcsv)
 
     return weight
 
@@ -343,7 +343,7 @@ class monojetProcessor(processor.ProcessorABC):
 
             # B jet veto weights
             genjets = setup_gen_jets(df)
-            bsf = btag_weight(jets,genjets,cfg)
+            bsf = btag_weight(ak4,genjets,cfg)
             weights.add("bveto", bsf.prod())
 
             weights = pileup_weights(weights, df, evaluator, cfg)
@@ -498,12 +498,12 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_eta_phi', phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
+            ezfill('ak4_deepcsv', deepcsv=ak4[mask].deepcsv.flatten(),   weight=w_alljets)
 
             w_bjets = weight_shape(bjets[mask].eta, region_weights.partial_weight(exclude=["bveto"])[mask])
             ezfill('bjet_eta',    jeteta=bjets[mask].eta.flatten(), weight=w_bjets)
             ezfill('bjet_phi',    jetphi=bjets[mask].phi.flatten(), weight=w_bjets)
             ezfill('bjet_pt',     jetpt=bjets[mask].pt.flatten(),   weight=w_bjets)
-            ezfill('bjet_sf',     sf=bsf[mask].flatten(),   weight=w_bjets)
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], region_weights.weight()[mask])
