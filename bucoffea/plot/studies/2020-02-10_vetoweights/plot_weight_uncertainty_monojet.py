@@ -34,6 +34,12 @@ def get_ratio(num, denom):
 import uproot
 style=Style()
 distributions = ['recoil_veto_weight','recoil']
+
+marker = {
+    "id" :'o',
+    "reco" : "s",
+    "iso" : "v",
+}
 def plot_weight_effect(acc, outdir,particle):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -64,17 +70,17 @@ def plot_weight_effect(acc, outdir,particle):
                 ax.plot([min(x), max(x)],[1,1],'--', color='gray',label='Hard veto', linewidth=3)
                 ax.plot(x, y['nominal'],'-ok', label='Nominal veto weight')
 
-                ax.plot(x, y[f"{particle}_id_dn"],'-o',color='crimson',label=f"{particle} ID variation")
-                ax.plot(x, y[f"{particle}_id_up"],'-o',color='crimson')
+                ax.plot(x, y[f"{particle}_id_dn"],f'-{marker["id"]}',color='crimson',label=f"{particle} ID variation")
+                ax.plot(x, y[f"{particle}_id_up"],f'-{marker["id"]}',color='crimson')
 
                 try:
-                    ax.plot(x, y[f"{particle}_iso_dn"],'-o',color='crimson',label=f"{particle} iso variation")
-                    ax.plot(x, y[f"{particle}_iso_up"],'-o',color='crimson')
+                    ax.plot(x, y[f"{particle}_iso_dn"],f'-{marker["iso"]}',color='dodgerblue',label=f"{particle} iso variation")
+                    ax.plot(x, y[f"{particle}_iso_up"],f'-{marker["iso"]}',color='dodgerblue')
                 except KeyError:
                     pass
                 try:
-                    ax.plot(x, y[f"{particle}_reco_dn"],'-o',color='crimson',label=f"{particle} reco variation")
-                    ax.plot(x, y[f"{particle}_reco_up"],'-o',color='crimson')
+                    ax.plot(x, y[f"{particle}_reco_dn"],f'-{marker["reco"]}',color='darkorange',label=f"{particle} reco variation")
+                    ax.plot(x, y[f"{particle}_reco_up"],f'-{marker["reco"]}',color='darkorange')
                 except KeyError:
                     pass
 
@@ -92,7 +98,7 @@ def plot_weight_effect(acc, outdir,particle):
                     f.write(tabulate(table, headers=['','Recoil','Nominal',particle], floatfmt=".1f")+'\n')
 
                 
-                ax.set_ylim(0.95,1.05)
+                # ax.set_ylim(0.95,1.08)
                 ax.grid(linestyle='--')
                 ax.legend()
                 ax.set_title(f"{particle} veto, {year}")
@@ -110,6 +116,7 @@ def plot_weight_effect(acc, outdir,particle):
 
                 ax=plt.gca()
                 ax.clear()
+
                 for sys in ['id','reco','iso']:
                     try:
                         unc_up = savgol_filter(y[f'{particle}_{sys}_up'] / y['nominal'],15,2)
@@ -131,16 +138,17 @@ def plot_weight_effect(acc, outdir,particle):
                     outfile[f'{particle}_{sys}_veto_sys_monov_up_{year}'] = f_up(centers), edges
                     outfile[f'{particle}_{sys}_veto_sys_monov_down_{year}'] = f_dn(centers), edges
 
-                    plt.plot(x, y[f'{particle}_{sys}_up'] / y['nominal'],'o',color='crimson',label=f"{particle} {sys} up")
-                    plt.plot(x, y[f'{particle}_{sys}_dn'] / y['nominal'],'o',color='navy',label=f"{particle} {sys} down")
+                    plt.plot(x, y[f'{particle}_{sys}_up'] / y['nominal'],f'-{marker[sys]}',color='crimson',label=f"{particle} {sys} up")
+                    plt.plot(x, y[f'{particle}_{sys}_dn'] / y['nominal'],f'-{marker[sys]}',color='navy',label=f"{particle} {sys} down")
                     plt.plot(x, unc_up,'-',color='crimson',label="Up, smoothed")
                     plt.plot(x, unc_dn,'-',color='navy',label="Down, smoothed")
                 ax.set_title(f"{particle} veto uncertainty, {year}")
                 ax.set_xlabel("Recoil (GeV)")
-                ax.set_ylim(0.97,1.03)
+                # ax.set_ylim(0.95,1.05)
                 ax.legend()
                 ax.grid(linestyle="--")
-                ax.figure.savefig(pjoin(outdir, f'variation_{particle}_{dataset}_{distribution}_{year}.{extension}'),bbox_inches='tight')
+                for extension in ['pdf','png']:
+                    ax.figure.savefig(pjoin(outdir, f'variation_{particle}_{dataset}_{distribution}_{year}.{extension}'),bbox_inches='tight')
                 # plt.close(fig)
 
 def main():
@@ -152,6 +160,7 @@ def main():
 
     plot_weight_effect(acc, outdir=outdir, particle="tau")
     plot_weight_effect(acc, outdir=outdir, particle="muon")
+    plot_weight_effect(acc, outdir=outdir, particle="ele")
 
 if __name__ == "__main__":
     main()
