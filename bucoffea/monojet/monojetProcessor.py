@@ -151,7 +151,13 @@ class monojetProcessor(processor.ProcessorABC):
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g']:
-            gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
+            all_gen_photons = gen[(gen.pdg==22)]
+            prompt_mask = (all_gen_photons.status==1)&(all_gen_photons.flag&1==1)
+            stat1_mask = (all_gen_photons.status==1)
+            gen_photons = all_gen_photons[prompt_mask | (~prompt_mask.any()) & stat1_mask ]
+            gen_photon = gen_photons[gen_photons.pt.argmax()]
+
+            gen_v_pt = gen_photon.pt.max()
 
         # Candidates
         # Already pre-filtered!
