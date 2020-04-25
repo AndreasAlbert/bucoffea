@@ -39,6 +39,7 @@ from bucoffea.helpers.dataset import (
                                       is_lo_g,
                                       is_nlo_z,
                                       is_nlo_w,
+                                      is_nlo_g,
                                       has_v_jet,
                                       is_data,
                                       extract_year
@@ -139,6 +140,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_lo_g'] = is_lo_g(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
+        df['is_nlo_g'] = is_nlo_g(dataset)
         df['has_v_jet'] = has_v_jet(dataset)
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
