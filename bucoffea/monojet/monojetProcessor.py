@@ -501,7 +501,7 @@ class monojetProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
                     output['tree_float16'][region]["recoil_pt"] +=  processor.column_accumulator(recoil_pt[mask])
                     output['tree_float16'][region]["recoil_phi"] +=  processor.column_accumulator(recoil_phi[mask])
-                    output['tree'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
+                    output['tree_float16'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 # Save only every Nth event
