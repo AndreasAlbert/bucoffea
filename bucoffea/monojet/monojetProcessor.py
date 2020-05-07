@@ -478,19 +478,11 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             if cfg.RUN.SAVE.TREE:
+                if region=='inclusive':
+                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
+                    for name in selection.names:
+                        output['tree_bool'][region][name] += processor.column_accumulator(np.bool_(selection.all(*[name])[mask]))
 
-                def fill_tree(variable, values):
-                    treeacc = processor.column_accumulator(values)
-                    name = f'tree_{region}_{variable}'
-                    if dataset in output[name].keys():
-                        output[name][dataset] += treeacc
-                    else:
-                        output[name][dataset] = treeacc
-                if region in ['cr_1e_j']:
-                    output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
-                    output['tree'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
-                    # output['tree'][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
-                    output['tree'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 # Save only every Nth event
