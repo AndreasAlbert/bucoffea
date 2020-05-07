@@ -37,6 +37,7 @@ from bucoffea.helpers.dataset import (
                                       is_lo_z,
                                       is_lo_w,
                                       is_lo_g,
+                                      is_lo_znunu,
                                       is_nlo_z,
                                       is_nlo_w,
                                       has_v_jet,
@@ -164,6 +165,7 @@ class monojetProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         df['is_lo_w'] = is_lo_w(dataset)
         df['is_lo_z'] = is_lo_z(dataset)
+        df['is_lo_znunu'] = is_lo_znunu(dataset)
         df['is_lo_g'] = is_lo_g(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
@@ -258,8 +260,18 @@ class monojetProcessor(processor.ProcessorABC):
 
         if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
             selection.add('hemveto', df['hemveto'])
+            selection.add('hemveto_ext', df['hemveto_ext'])
         else:
             selection.add('hemveto', np.ones(df.size)==1)
+            selection.add('hemveto_ext', np.ones(df.size)==1)
+
+        selection.add("metinhem", ((-1.6 < met_phi)&(met_phi<-0.8)))
+        selection.add("metinantihem", ((1.6 > met_phi)&(met_phi>0.8)))
+
+        if df['year'] == 2018:
+            selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
+        else:
+            selection.add("metphihemextveto", pass_all)
 
         # AK4 Jet
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
@@ -534,9 +546,16 @@ class monojetProcessor(processor.ProcessorABC):
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
-            ezfill('ak4_eta_phi', phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
+            ezfill('ak4_eta_phi',phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
-            ezfill('ak4_deepcsv', deepcsv=ak4[mask].deepcsv.flatten(),   weight=w_alljets)
+            ezfill('ak4_deepcsv',deepcsv=ak4[mask].deepcsv.flatten(),   weight=w_alljets)
+
+            ak4_sublead_ineta = ak4[ak4.abseta<2.4][:,1:]
+            w_ak4_sublead_ineta = weight_shape(ak4_sublead_ineta[mask].eta, region_weights.partial_weight(exclude=exclude)[mask])
+
+            ezfill('ak4_sublead_ineta_eta',    jeteta=ak4_sublead_ineta[mask].eta.flatten(), weight=w_ak4_sublead_ineta)
+            ezfill('ak4_sublead_ineta_phi',    jetphi=ak4_sublead_ineta[mask].phi.flatten(), weight=w_ak4_sublead_ineta)
+            ezfill('ak4_sublead_ineta_pt',     jetpt=ak4_sublead_ineta[mask].pt.flatten(),   weight=w_ak4_sublead_ineta)
 
             w_bjets = weight_shape(bjets[mask].eta, region_weights.partial_weight(exclude=["bveto"])[mask])
             ezfill('bjet_eta',    jeteta=bjets[mask].eta.flatten(), weight=w_bjets)
@@ -607,6 +626,13 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask], weight=rw[mask])
             ezfill('met',                met=met_pt[mask],            weight=rw[mask] )
             ezfill('met_phi',            phi=met_phi[mask],           weight=rw[mask] )
+            ezfill('tkmet',              met=df['TkMET_pt'][mask],            weight=rw[mask] )
+            ezfill('tkmet_phi',          phi=df['TkMET_phi'][mask],           weight=rw[mask] )
+            ezfill('puppimet',           met=df['PuppiMET_pt'][mask],            weight=rw[mask] )
+            ezfill('puppimet_phi',       phi=df['PuppiMET_phi'][mask],           weight=rw[mask] )
+            ezfill('calomet',            met=df['CaloMET_pt'][mask],            weight=rw[mask] )
+            ezfill('calomet_phi',        phi=df['CaloMET_phi'][mask],           weight=rw[mask] )
+
             ezfill('recoil',             recoil=recoil_pt[mask],      weight=rw[mask] )
             ezfill('recoil_phi',         phi=recoil_phi[mask],        weight=rw[mask] )
             ezfill('recoil_nopog',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
@@ -615,7 +641,6 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('recoil_notrg',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
             ezfill('recoil_hardbveto',   recoil=recoil_pt[mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=exclude+['bveto'])[mask&(bjets.counts==0)])
 
-            ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
 

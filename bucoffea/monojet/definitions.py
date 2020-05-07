@@ -98,6 +98,12 @@ def monojet_accumulator(cfg):
     items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["tkmet"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["tkmet_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["puppimet"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["puppimet_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["calomet"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["calomet_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_veto_weight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,variation_ax)
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -108,7 +114,7 @@ def monojet_accumulator(cfg):
     items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_bveto_down"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
+
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -118,10 +124,14 @@ def monojet_accumulator(cfg):
     items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
 
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
+    items["ak4_pt_eta"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_sublead_ineta_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_sublead_ineta_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_sublead_ineta_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_deepcsv"] = Hist("Counts", dataset_ax, region_ax, deepcsv_ax)
     items["bjet_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["bjet_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -387,6 +397,14 @@ def setup_candidates(df, cfg):
         (ak4.phi < -0.87)
         ]
     df['hemveto'] = hem_ak4.counts == 0
+
+    hem_ak4_ext = ak4[
+        (-3.0 < ak4.eta) &
+        (ak4.eta < -1.3) &
+        (-1.57 < ak4.phi) &
+        (ak4.phi < -0.87)
+        ]
+    df['hemveto_ext'] = hem_ak4_ext.counts == 0
 
     # B jets have their own overlap cleaning,
     # so deal with them before applying filtering to jets
@@ -666,6 +684,28 @@ def monojet_regions(cfg):
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
+
+    tmp = {}
+    for region in regions.keys():
+        if not region.startswith("sr"):
+            continue
+        new_name = region + "_nohem"
+        new_cuts = copy.deepcopy(regions[region])
+        new_cuts.remove("_nohem")
+        tmp[new_name]  = new_cuts
+
+        new_name2 = new_name + "_metinhem"
+
+        tmp[new_name2] = new_cuts + ['metinhem']
+        new_name3 = new_name + "_metinantihem"
+        tmp[new_name3] = new_cuts + ['metinantihem']
+
+        new_name4 = new_name + "_metphihemextveto"
+        tmp[new_name4] = new_cuts + ['metphihemextveto']
+
+        new_name5 = new_name + "_hemveto_ext"
+        tmp[new_name5] = new_cuts + ['hemveto_ext']
+    regions.update(tmp)
 
     return regions
 
