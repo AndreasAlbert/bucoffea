@@ -692,7 +692,7 @@ def monojet_regions(cfg):
             continue
         new_name = region + "_nohem"
         new_cuts = copy.deepcopy(regions[region])
-        new_cuts.remove("_nohem")
+        new_cuts.remove("hemveto")
         tmp[new_name]  = new_cuts
 
         new_name2 = new_name + "_metinhem"
@@ -722,7 +722,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
             qcd_nlo = fitfun(gen_v_pt, 1.053, 3.163e-3, 0.746)
         theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-         if df['is_lo_znunu']:
+        if df['is_lo_znunu']:
             qcd_nlo = evaluator["qcd_nlo_znn_2017"](gen_v_pt)
         else:
             qcd_nlo = evaluator["qcd_nlo_dy_2017"](gen_v_pt)
