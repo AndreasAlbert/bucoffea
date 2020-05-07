@@ -343,6 +343,11 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
         selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
+        prescale = 5
+        if df["is_data"]:
+            selection.add("prescale", (df['event']%prescale)==0)
+        else:
+            selection.add("prescale",pass_all)
         # Fill histograms
         output = self.accumulator.identity()
 
@@ -478,7 +483,8 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
-                continue
+                if not df['is_data']:
+                    rweight = rweight / prescale
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
