@@ -498,6 +498,8 @@ class monojetProcessor(processor.ProcessorABC):
                 if df['is_data']:
                     if region in ['sr_j']:
                         output['tree_int64'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
+                        output['tree_int64'][region]["run"] +=  processor.column_accumulator(df["run"][mask])
+                        output['tree_int64'][region]["lumi"] +=  processor.column_accumulator(df["luminosityBlock"][mask])
                         output['tree_float16'][region]["recoil_pt"] +=  processor.column_accumulator(recoil_pt[mask])
                         output['tree_float16'][region]["recoil_phi"] +=  processor.column_accumulator(recoil_phi[mask])
             # Save the event numbers of events passing this selection
