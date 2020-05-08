@@ -482,9 +482,8 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             # Blinding
-            if(self._blind and df['is_data'] and region.startswith('sr')):
-                if not df['is_data']:
-                    rweight = rweight / prescale
+            if(not df['is_data'] and region.startswith('sr')):
+                rweight = rweight / prescale
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
@@ -496,12 +495,11 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             if cfg.RUN.SAVE.TREE:
-                if region in ['sr_j']:
-                    output['tree_int64'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
-                    output['tree_float16'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
-                    output['tree_float16'][region]["recoil_pt"] +=  processor.column_accumulator(recoil_pt[mask])
-                    output['tree_float16'][region]["recoil_phi"] +=  processor.column_accumulator(recoil_phi[mask])
-                    output['tree_float16'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
+                if df['is_data']:
+                    if region in ['sr_j']:
+                        output['tree_int64'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
+                        output['tree_float16'][region]["recoil_pt"] +=  processor.column_accumulator(recoil_pt[mask])
+                        output['tree_float16'][region]["recoil_phi"] +=  processor.column_accumulator(recoil_phi[mask])
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 # Save only every Nth event
