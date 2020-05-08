@@ -558,6 +558,13 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_sublead_ineta_phi',    jetphi=ak4_sublead_ineta[mask].phi.flatten(), weight=w_ak4_sublead_ineta)
             ezfill('ak4_sublead_ineta_pt',     jetpt=ak4_sublead_ineta[mask].pt.flatten(),   weight=w_ak4_sublead_ineta)
 
+            ak4_sublead_ineta_pt30 = ak4[(ak4.abseta<2.4)&(ak4.pt>30)][:,1:]
+            w_ak4_sublead_ineta_pt30 = weight_shape(ak4_sublead_ineta_pt30[mask].eta, rweight[mask])
+
+            ezfill('ak4_sublead_ineta_pt30_eta',    jeteta=ak4_sublead_ineta_pt30[mask].eta.flatten(), weight=w_ak4_sublead_ineta_pt30)
+            ezfill('ak4_sublead_ineta_pt30_phi',    jetphi=ak4_sublead_ineta_pt30[mask].phi.flatten(), weight=w_ak4_sublead_ineta_pt30)
+            ezfill('ak4_sublead_ineta_pt30_pt',     jetpt=ak4_sublead_ineta_pt30[mask].pt.flatten(),   weight=w_ak4_sublead_ineta_pt30)
+
             w_bjets = weight_shape(bjets[mask].eta, 1/prescale * region_weights.partial_weight(exclude=["bveto"])[mask])
             ezfill('bjet_eta',    jeteta=bjets[mask].eta.flatten(), weight=w_bjets)
             ezfill('bjet_phi',    jetphi=bjets[mask].phi.flatten(), weight=w_bjets)
