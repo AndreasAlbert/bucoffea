@@ -562,18 +562,25 @@ class monojetProcessor(processor.ProcessorABC):
                     ezfill('ak8_passtightmd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
 
             # MET
-            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('met',                met=met_pt[mask],            weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('met_phi',            phi=met_phi[mask],            weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil',             recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil_phi',         phi=recoil_phi[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil_nopog',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
-            ezfill('recoil_nopref',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
-            ezfill('recoil_nopu',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
-            ezfill('recoil_notrg',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
+            rw = region_weights.partial_weight(exclude=exclude)
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask], weight=rw[mask])
+            ezfill('met',                met=met_pt[mask],            weight=rw[mask] )
+            ezfill('met_phi',            phi=met_phi[mask],           weight=rw[mask] )
+            ezfill('recoil',             recoil=recoil_pt[mask],      weight=rw[mask] )
+            ezfill('recoil_phi',         phi=recoil_phi[mask],        weight=rw[mask] )
+            ezfill('recoil_nopog',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
+            ezfill('recoil_nopref',      recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
+            ezfill('recoil_nopu',        recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
+            ezfill('recoil_notrg',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
+            ezfill('recoil_notheory',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['theory']+exclude)[mask])
+
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
+
+            if gen_v_pt is not None:
+                ezfill("gen_v_pt", ptv=gen_v_pt[mask], weight=rw[mask])
+                ezfill("gen_v_pt", ptv=gen_v_pt[mask], weight=region_weights.partial_weight(exclude=exclude+["theory"])[mask])
 
             if re.match('.*no_veto.*', region):
                 for variation in veto_weights._weights.keys():
@@ -662,7 +669,9 @@ class monojetProcessor(processor.ProcessorABC):
             # Photon
             if '_g_' in region:
                 w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],region_weights.partial_weight(exclude=exclude)[mask]);
+                w_leading_photon_notheory = weight_shape(photons[leadphoton_index].pt[mask],region_weights.partial_weight(exclude=exclude+['theory'])[mask]);
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
+                ezfill('photon_pt0_notheory',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon_notheory)
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_eta_phi', phi=photons[leadphoton_index].phi[mask].flatten(),eta=photons[leadphoton_index].eta[mask].flatten(), weight=w_leading_photon)

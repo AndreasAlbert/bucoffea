@@ -31,6 +31,7 @@ def monojet_accumulator(cfg):
     variation_ax = Cat("variation","Variation")
     wppass_ax = Bin("wppass", "WP Pass",2,-0.5,1.5)
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
+    ptv_ax = Bin("ptv",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
@@ -76,6 +77,8 @@ def monojet_accumulator(cfg):
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
+    items["gen_v_pt"] = Hist("Counts", dataset_ax, region_ax, ptv_ax)
+    items["gen_v_pt_notheory"] = Hist("Counts", dataset_ax, ptv_ax)
     items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
@@ -84,6 +87,7 @@ def monojet_accumulator(cfg):
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_notheory"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
@@ -179,6 +183,7 @@ def monojet_accumulator(cfg):
     items["dielectron_dr"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items['photon_pt0_notheory'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
