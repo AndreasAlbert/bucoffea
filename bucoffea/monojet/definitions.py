@@ -172,6 +172,8 @@ def monojet_accumulator(cfg):
     items["ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpftk"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpfpuppi"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 

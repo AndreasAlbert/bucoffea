@@ -227,6 +227,9 @@ class monojetProcessor(processor.ProcessorABC):
         # Recoil
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
         df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
+        df["dPFTk"] = (met_pt - df["TkMET_pt"]) / df["recoil_pt"]
+        df["dPFPuppi"] = (met_pt - df["PuppiMET_pt"]) / df["recoil_pt"]
+
         df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=2.4)
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=2.4)
         selection = processor.PackedSelection()
@@ -632,6 +635,8 @@ class monojetProcessor(processor.ProcessorABC):
             # MET
             rw = rweight
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask], weight=rw[mask])
+            ezfill('dpftk',              dpfcalo=df["dPFTk"][mask], weight=rw[mask])
+            ezfill('dpfpuppi',           dpfcalo=df["dPFPuppi"][mask], weight=rw[mask])
             ezfill('met',                met=met_pt[mask],            weight=rw[mask] )
             ezfill('met_phi',            phi=met_phi[mask],           weight=rw[mask] )
             ezfill('tkmet',              met=df['TkMET_pt'][mask],            weight=rw[mask] )
