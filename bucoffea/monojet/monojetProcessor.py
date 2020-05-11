@@ -580,7 +580,7 @@ class monojetProcessor(processor.ProcessorABC):
 
             if gen_v_pt is not None:
                 ezfill("gen_v_pt", ptv=gen_v_pt[mask], weight=rw[mask])
-                ezfill("gen_v_pt", ptv=gen_v_pt[mask], weight=region_weights.partial_weight(exclude=exclude+["theory"])[mask])
+                ezfill("gen_v_pt_notheory", ptv=gen_v_pt[mask], weight=region_weights.partial_weight(exclude=exclude+["theory"])[mask])
 
             if re.match('.*no_veto.*', region):
                 for variation in veto_weights._weights.keys():
