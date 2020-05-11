@@ -178,7 +178,7 @@ default:
         - 79123963
         - 51393664
     trigger_study: False
-    monov: False
+    monov: True
     monovmistag: False
     monoj: True
   triggers:
