@@ -49,6 +49,8 @@ from bucoffea.helpers.gen import (
                                   setup_dressed_gen_candidates,
                                   fill_gen_v_info
                                  )
+def pol2(x, a, b, c):
+    return np.polyval([a,b,c],x)
 
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
@@ -577,6 +579,20 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
+
+
+            if df["is_lo_g"]:
+                ezfill('recoil_2016sf',         recoil=recoil_pt[mask], weight=(rw*evaluator["qcd_nlo_g_2016sf"](gen_v_pt))[mask])
+                ezfill('recoil_2017sf',         recoil=recoil_pt[mask], weight=(rw*evaluator["qcd_nlo_g_2017sf"](gen_v_pt))[mask])
+                ezfill('recoil_recosfgenpt',    recoil=recoil_pt[mask], weight=(rw*pol2(gen_v_pt,         7.758e-7, -1.466e-3, 1.918))[mask])
+                ezfill('recoil_recosfphotonpt', recoil=recoil_pt[mask], weight=(rw*pol2(photons.pt.max(), 7.230-7 , -1.389-3,  1.893))[mask])
+                ezfill('recoil_recosfrecoil',   recoil=recoil_pt[mask], weight=(rw*pol2(recoil_pt,        8.334e-7, -1.507e-3, 1.953))[mask])
+            else:
+                ezfill('recoil_2016sf',         recoil=recoil_pt[mask], weight=rw[mask])
+                ezfill('recoil_2017sf',         recoil=recoil_pt[mask], weight=rw[mask])
+                ezfill('recoil_recosfgenpt',    recoil=recoil_pt[mask], weight=rw[mask])
+                ezfill('recoil_recosfphotonpt', recoil=recoil_pt[mask], weight=rw[mask])
+                ezfill('recoil_recosfrecoil',   recoil=recoil_pt[mask], weight=rw[mask])
 
             if gen_v_pt is not None:
                 ezfill("gen_v_pt", ptv=gen_v_pt[mask], weight=rw[mask])

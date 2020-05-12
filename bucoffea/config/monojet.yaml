@@ -143,8 +143,11 @@ default:
       histogram: dy_dress_monojet
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
 
-    qcd_nlo_g:
+    qcd_nlo_g_2017sf:
       histogram: gjets17_stat1_monojet
+      file: data/sf/theory/gjets_sf_monojet.root
+    qcd_nlo_g_2016sf:
+      histogram: gjets16_stat1_monojet
       file: data/sf/theory/gjets_sf_monojet.root
     qcd_nnlo_g:
       histogram: aj
