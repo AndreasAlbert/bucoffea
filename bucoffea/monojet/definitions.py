@@ -784,7 +784,7 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod())
 
     # Photon ID and electron veto
-    weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
+    weights.add("photon_id_tight", 1.025**photons[df['is_tight_photon']].counts)
 
     if year == 2016:
         csev_weight = evaluator["photon_csev"](photons.abseta, photons.pt).prod()
