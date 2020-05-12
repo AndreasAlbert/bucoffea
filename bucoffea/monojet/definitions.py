@@ -35,6 +35,7 @@ def monojet_accumulator(cfg):
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
+    recoil_ax_coarse = Bin("recoil", r"Recoil (GeV)", 20, 0, 1000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
@@ -56,6 +57,8 @@ def monojet_accumulator(cfg):
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 50, 0, 2000)
 
     photon_pt0_ax = Bin("pt", r"$p_{T}$ (GeV)", list(range(200,300,10)) + list(range(300,500,20)) + list(range(500,1000,50)) + list(range(1000,2000,100)))
+    photon_pt0_ax_coarse = Bin("pt", r"$p_{T}$ (GeV)", 50,0,1000)
+    ptv_ax_coarse = Bin("ptv", r"$p_{T}$ (GeV)", 50,0,1000)
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 50, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 50, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
@@ -85,6 +88,11 @@ def monojet_accumulator(cfg):
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_2016sf"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_2017sf"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_recosfgenpt"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_recosfphotonpt"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_recosfrecoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_veto_weight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,variation_ax)
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -185,6 +193,8 @@ def monojet_accumulator(cfg):
     items["dielectron_dr"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, photon_pt0_ax)
+    items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, photon_pt0_ax_coarse, recoil_ax_coarse)
+    items['photon_pt0_ptv'] = Hist("Counts", dataset_ax, region_ax, photon_pt0_ax_coarse, ptv_ax_coarse)
     items['photon_pt0_notheory'] = Hist("Counts", dataset_ax, region_ax, photon_pt0_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
@@ -673,7 +683,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     elif df['is_nlo_z']:
         theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
     elif df['is_nlo_g']:
         theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
     else:
