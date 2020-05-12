@@ -144,8 +144,8 @@ default:
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
 
     qcd_nlo_g:
-      histogram: gjets_stat1_monojet
-      file: data/sf/theory/monojet_photon_kfac_new.root
+      histogram: gjets17_stat1_monojet
+      file: data/sf/theory/gjets_sf_monojet.root
     qcd_nnlo_g:
       histogram: aj
       file: data/sf/theory/lindert_qcd_nnlo_sf.root
